@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
+use sha2::{Digest, Sha256};
 use tokio::sync::OnceCell;
 
 use crate::{
@@ -14,6 +15,7 @@ use crate::{
 };
 
 pub(crate) mod bin;
+pub(crate) mod daemon;
 pub(crate) mod link;
 pub(crate) mod login;
 pub(crate) mod logout;
@@ -109,5 +111,15 @@ impl CommandBase {
         let repo_config = self.repo_config()?;
         let api_url = repo_config.api_url();
         APIClient::new(api_url)
+    }
+
+    pub fn daemon_file_root(&self) -> PathBuf {
+        std::env::temp_dir().join("turbod").join(self.repo_hash())
+    }
+
+    fn repo_hash(&self) -> String {
+        let mut hasher = Sha256::new();
+        hasher.update(self.repo_root.to_str().unwrap().as_bytes());
+        hex::encode(&hasher.finalize()[..8])
     }
 }

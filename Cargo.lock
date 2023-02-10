@@ -991,6 +991,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "command-group"
+version = "2.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "026c3922235f9f7d78f21251a026f3acdeb7cce3deba107fe09a4bfa63d850a2"
+dependencies = [
+ "async-trait",
+ "nix 0.26.2",
+ "tokio",
+ "winapi 0.3.9",
+]
+
+[[package]]
 name = "concurrent-queue"
 version = "1.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2111,7 +2123,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5ab7d1bd1bd33cc98b0889831b72da23c0aa4df9cec7e0702f46ecea04b35db6"
 dependencies = [
  "bitflags",
- "fsevent-sys",
+ "fsevent-sys 2.0.1",
 ]
 
 [[package]]
@@ -2119,6 +2131,15 @@ name = "fsevent-sys"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f41b048a94555da0f42f1d632e2e19510084fb8e303b0daa2816e733fb3644a0"
+dependencies = [
+ "libc",
+]
+
+[[package]]
+name = "fsevent-sys"
+version = "4.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "76ee7a02da4d231650c7cea31349b889be2f45ddb3ef3032d2ec8185f6313fd2"
 dependencies = [
  "libc",
 ]
@@ -2771,6 +2792,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "inotify"
+version = "0.9.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f8069d3ec154eb856955c1c0fbffefbf5f3c40a104ec912d4797314c1801abff"
+dependencies = [
+ "bitflags",
+ "inotify-sys",
+ "libc",
+]
+
+[[package]]
 name = "inotify-sys"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2994,6 +3026,26 @@ checksum = "7507624b29483431c0ba2d82aece8ca6cdba9382bff4ddd0f7490560c056098d"
 dependencies = [
  "winapi 0.2.8",
  "winapi-build",
+]
+
+[[package]]
+name = "kqueue"
+version = "1.0.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2c8fc60ba15bf51257aa9807a48a61013db043fcf3a78cb0d916e8e396dcad98"
+dependencies = [
+ "kqueue-sys",
+ "libc",
+]
+
+[[package]]
+name = "kqueue-sys"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8367585489f01bc55dd27404dcf56b95e6da061a256a666ab23be9ba96a2e587"
+dependencies = [
+ "bitflags",
+ "libc",
 ]
 
 [[package]]
@@ -3761,7 +3813,7 @@ dependencies = [
  "futures",
  "mime",
  "next-core",
- "nix",
+ "nix 0.25.1",
  "once_cell",
  "owo-colors",
  "parking_lot",
@@ -3870,6 +3922,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "nix"
+version = "0.26.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bfdda3d196821d6af13126e40375cdf7da646a96114af134d5f417a9a1dc8e1a"
+dependencies = [
+ "bitflags",
+ "cfg-if 1.0.0",
+ "libc",
+ "static_assertions",
+]
+
+[[package]]
 name = "node-file-trace"
 version = "0.1.0"
 dependencies = [
@@ -3938,12 +4002,39 @@ dependencies = [
  "bitflags",
  "filetime",
  "fsevent",
- "fsevent-sys",
- "inotify",
+ "fsevent-sys 2.0.1",
+ "inotify 0.7.1",
  "libc",
  "mio 0.6.23",
  "mio-extras",
  "walkdir",
+ "winapi 0.3.9",
+]
+
+[[package]]
+name = "notify"
+version = "5.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58ea850aa68a06e48fdb069c0ec44d0d64c8dbffa49bf3b6f7f0a901fdea1ba9"
+dependencies = [
+ "bitflags",
+ "crossbeam-channel",
+ "filetime",
+ "fsevent-sys 4.1.0",
+ "inotify 0.9.6",
+ "kqueue",
+ "libc",
+ "mio 0.8.5",
+ "walkdir",
+ "windows-sys 0.42.0",
+]
+
+[[package]]
+name = "ntapi"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bc51db7b362b205941f71232e56c625156eb9a929f8cf74a428fd5bc094a4afc"
+dependencies = [
  "winapi 0.3.9",
 ]
 
@@ -4361,6 +4452,14 @@ name = "pico-args"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "db8bcd96cb740d03149cbad5518db9fd87126a10ab519c011893b1754134c468"
+
+[[package]]
+name = "pidlock"
+version = "0.1.4"
+dependencies = [
+ "libc",
+ "log",
+]
 
 [[package]]
 name = "pin-project"
@@ -6852,6 +6951,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2047c6ded9c721764247e62cd3b03c09ffc529b2ba5b10ec482ae507a4a70160"
 
 [[package]]
+name = "sysinfo"
+version = "0.27.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "975fe381e0ecba475d4acff52466906d95b153a40324956552e027b2a9eaa89e"
+dependencies = [
+ "cfg-if 1.0.0",
+ "core-foundation-sys",
+ "libc",
+ "ntapi",
+ "once_cell",
+ "rayon",
+ "winapi 0.3.9",
+]
+
+[[package]]
 name = "tabled"
 version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7335,6 +7449,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "tonic-build"
+version = "0.8.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5bf5e9b9c0f7e0a7c027dcfaba7b2c60816c7049171f679d99ee2ff65d0de8c4"
+dependencies = [
+ "prettyplease",
+ "proc-macro2 1.0.51",
+ "prost-build",
+ "quote 1.0.23",
+ "syn 1.0.107",
+]
+
+[[package]]
 name = "tower"
 version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7508,6 +7635,7 @@ dependencies = [
  "build-target",
  "clap 4.1.4",
  "clap_complete",
+ "command-group",
  "dunce",
  "itertools",
  "log",
@@ -7517,6 +7645,7 @@ dependencies = [
  "serde_json",
  "serde_yaml 0.8.26",
  "tiny-gradient",
+ "tracing-subscriber",
  "turborepo-lib",
 ]
 
@@ -7615,7 +7744,7 @@ dependencies = [
  "include_dir",
  "jsonc-parser",
  "mime",
- "notify",
+ "notify 4.0.17",
  "parking_lot",
  "rstest",
  "serde",
@@ -8024,19 +8153,25 @@ dependencies = [
  "chrono",
  "clap 4.1.4",
  "clap_complete",
+ "command-group",
  "config",
  "console",
  "dialoguer",
  "dirs-next",
  "dunce",
  "env_logger 0.10.0",
+ "futures",
+ "hex",
  "hostname",
  "indicatif",
  "itertools",
  "lazy_static",
  "log",
+ "notify 5.1.0",
+ "pidlock",
  "predicates",
  "pretty_assertions",
+ "prost",
  "rand",
  "reqwest",
  "rustc_version_runtime",
@@ -8044,10 +8179,17 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_yaml 0.8.26",
+ "sha2",
+ "sysinfo",
  "tempfile",
+ "thiserror",
  "tiny-gradient",
  "tokio",
+ "tonic",
+ "tonic-build",
+ "tower",
  "turbo-updater",
+ "url",
  "webbrowser 0.8.7",
 ]
 
