@@ -12,7 +12,6 @@ bench = false
 [dependencies]
 anyhow = { workspace = true }
 async-trait = { workspace = true }
-rustc-hash = { workspace = true }
 indexmap = { workspace = true }
 indoc = { workspace = true }
 lazy_static = { workspace = true }
@@ -25,6 +24,7 @@ once_cell = { workspace = true }
 parking_lot = { workspace = true }
 pin-project-lite = { workspace = true }
 regex = { workspace = true }
+rustc-hash = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_qs = { workspace = true }

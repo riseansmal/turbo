@@ -25,8 +25,8 @@ node-api = []
 custom_allocator = ["turbo-malloc", "turbo-malloc/custom_allocator"]
 
 [dependencies]
-clap = { workspace = true, optional = true, features = ["derive"] }
 anyhow = { workspace = true }
+clap = { workspace = true, optional = true, features = ["derive"] }
 console-subscriber = { workspace = true, optional = true }
 serde = { workspace = true, features = ["derive"] }
 serde_json = { workspace = true }

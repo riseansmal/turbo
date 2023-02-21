@@ -48,4 +48,3 @@ tokio = { workspace = true, features = ["full"] }
 webbrowser = { workspace = true }
 
 turbo-updater = { workspace = true }
-
