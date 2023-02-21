@@ -529,8 +529,6 @@ where
     }
 }
 
-// content.cast_trait::<T>()
-
 #[derive(Error, Debug)]
 #[error("Unable to read collectibles")]
 pub struct ReadCollectiblesError {
