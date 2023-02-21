@@ -27,7 +27,8 @@ pub trait VersionedContent {
         // By default, since we can't make any assumptions about the versioning
         // scheme of the content, we ask for a full invalidation, except in the
         // case where versions are the same. And we can't compare `VersionVc`s
-        // directly since `.cell_local()` breaks referential equality checks.
+        // directly since going through a `TraitRef<VersionVc>` breaks referential
+        // equality checks.
         let to = self_vc.version();
         let from_id = from.id();
         let to_id = to.id();
