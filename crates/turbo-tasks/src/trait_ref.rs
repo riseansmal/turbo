@@ -54,7 +54,7 @@ where
 ///
 /// The signature is similar to `IntoFuture`, but we don't want trait vcs to
 /// have the same future-like semantics as value vcs when it comes to producing
-/// refs. This behavior is really needed, so in most cases, `.await`ing a trait
+/// refs. This behavior is rarely needed, so in most cases, `.await`ing a trait
 /// vc is a mistake.
 pub trait IntoTraitRef {
     type TraitVc: ValueTraitVc;
