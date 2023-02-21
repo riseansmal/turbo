@@ -96,13 +96,13 @@ opt-level = 3
 [workspace.dependencies]
 # Keep consistent with preset_env_base through swc_core
 browserslist-rs = { version = "0.12.2" }
-swc_core = { version = "0.59.26" }
-testing = { version = "0.31.31" }
-swc_emotion = { version = "0.29.4" }
-styled_jsx = { version = "0.30.4" }
-styled_components = { version = "0.53.4" }
-modularize_imports = { version = "0.26.4" }
 mdxjs = { version = "0.1.6" }
+modularize_imports = { version = "0.26.4" }
+styled_components = { version = "0.53.4" }
+styled_jsx = { version = "0.30.4" }
+swc_core = { version = "0.59.26" }
+swc_emotion = { version = "0.29.4" }
+testing = { version = "0.31.31" }
 
 auto-hash-map = { path = "crates/auto-hash-map" }
 next-binding = { path = "crates/next-binding" }
@@ -188,9 +188,9 @@ owo-colors = "3.5.0"
 parking_lot = "0.12.1"
 pathdiff = "0.2.1"
 pin-project-lite = "0.2.9"
+predicates = "2.1.5"
 pretty_assertions = "1.3.0"
 proc-macro2 = "1.0.51"
-predicates = "2.1.5"
 qstring = "0.7.2"
 quote = "1.0.23"
 rand = "0.8.5"
@@ -206,8 +206,8 @@ syn = "1.0.107"
 tempfile = "3.3.0"
 test-generator = "0.3.1"
 thiserror = "1.0.38"
+tiny-gradient = "0.1.0"
 tokio = "1.25.0"
 tracing = "0.1.37"
 url = "2.2.2"
 webbrowser = "0.8.7"
-tiny-gradient = "0.1.0"
