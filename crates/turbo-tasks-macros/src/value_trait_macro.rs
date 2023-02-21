@@ -152,7 +152,7 @@ pub fn value_trait(args: TokenStream, input: TokenStream) -> TokenStream {
         turbo_tasks::ReadRawVcFuture<turbo_tasks::TraitCast<#ref_ident>>
     };
 
-    let into_future = quote! {
+    let into_trait_ref = quote! {
         impl turbo_tasks::IntoTraitRef for #ref_ident {
             type TraitVc = #ref_ident;
             type Future = #future_type;
@@ -313,7 +313,7 @@ pub fn value_trait(args: TokenStream, input: TokenStream) -> TokenStream {
             }
         }
 
-        #into_future
+        #into_trait_ref
 
         impl<T> #ident for T
         where
