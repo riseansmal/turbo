@@ -118,11 +118,17 @@ pub async fn well_known_function_call(
 }
 
 pub fn object_assign(args: Vec<JsValue>) -> JsValue {
-    if args.iter().all(|arg| matches!(arg, JsValue::Object(..))) {
+    if args.iter().all(|arg| matches!(arg, JsValue::Object { .. })) {
         if let Some(mut merged_object) = args.into_iter().reduce(|mut acc, cur| {
-            if let JsValue::Object(_, parts) = &mut acc {
-                if let JsValue::Object(_, next_parts) = &cur {
+            if let JsValue::Object { parts, mutable, .. } = &mut acc {
+                if let JsValue::Object {
+                    parts: next_parts,
+                    mutable: next_mutable,
+                    ..
+                } = &cur
+                {
                     parts.extend_from_slice(next_parts);
+                    *mutable |= *next_mutable;
                 }
             }
             acc
@@ -281,16 +287,15 @@ pub fn path_dirname(mut args: Vec<JsValue>) -> JsValue {
     if let Some(arg) = args.iter_mut().next() {
         if let Some(str) = arg.as_str() {
             if let Some(i) = str.rfind('/') {
-                return JsValue::Constant(ConstantValue::StrWord(str[..i].to_string().into()));
+                return JsValue::Constant(ConstantValue::Str(str[..i].to_string().into()));
             } else {
-                return JsValue::Constant(ConstantValue::StrWord("".into()));
+                return JsValue::Constant(ConstantValue::Str("".into()));
             }
         } else if let JsValue::Concat(_, items) = arg {
             if let Some(last) = items.last_mut() {
                 if let Some(str) = last.as_str() {
                     if let Some(i) = str.rfind('/') {
-                        *last =
-                            JsValue::Constant(ConstantValue::StrWord(str[..i].to_string().into()));
+                        *last = JsValue::Constant(ConstantValue::Str(str[..i].to_string().into()));
                         return take(arg);
                     }
                 }
