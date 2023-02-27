@@ -77,6 +77,13 @@ pub(super) async fn update_chunk_list(
 
     let content = content.await?;
 
+    // There are two kind of updates nested within a chunk list update:
+    // * merged updates; and
+    // * single chunk updates.
+    // In order to compute merged updates, we first need to group mergeable chunks
+    // by common mergers. Then, we compute the update of each group separately.
+    // Single chunk updates are computed separately and only require a stable chunk
+    // path to identify the chunk across versions.
     let mut by_merger = IndexMap::<_, Vec<_>>::new();
     let mut by_path = IndexMap::<_, _>::new();
 

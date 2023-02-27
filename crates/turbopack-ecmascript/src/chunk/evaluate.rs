@@ -24,7 +24,8 @@ pub struct EcmascriptChunkEvaluate {
     /// All chunks of this chunk group need to be ready for execution to start.
     /// When None, it will use a chunk group created from the current chunk.
     pub chunk_group: Option<ChunkGroupVc>,
-    /// The path to the chunk list file.
+    /// The path to the chunk list asset. This will be used to register the
+    /// chunk list when this chunk is evaluated.
     pub chunk_list_path: Option<FileSystemPathVc>,
 }
 

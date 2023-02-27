@@ -83,6 +83,7 @@ impl ChunkItem for ManifestLoaderItem {
             }
             .cell()
             .into(),
+            // This creates the chunk list corresponding to the manifest chunk's chunk group.
             ChunkListReferenceVc::new(
                 this.context.output_root(),
                 this.manifest.chunk_group(),

@@ -168,6 +168,7 @@ impl ChunkItem for ChunkGroupFilesChunkItem {
             .map(Into::into)
             .collect();
 
+        // This creates the chunk list corresponding to this chunk group.
         references.push(
             ChunkListReferenceVc::new(
                 self.inner.await?.server_root,
