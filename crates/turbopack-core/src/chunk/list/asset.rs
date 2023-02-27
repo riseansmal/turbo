@@ -9,6 +9,14 @@ use crate::{
     version::{VersionedContent, VersionedContentVc},
 };
 
+/// An asset that represents a list of chunks that exist together in a chunk
+/// group, and should be *updated* together.
+///
+/// A chunk list has no actual content: all it does is merge updates from its
+/// chunks into a single update when possible. This is useful for keeping track
+/// of changes that affect more than one chunk, or affect the chunk group, e.g.:
+/// * moving a module from one chunk to another;
+/// * changing a chunk's path.
 #[turbo_tasks::value(shared)]
 pub(super) struct ChunkListAsset {
     server_root: FileSystemPathVc,
@@ -18,6 +26,7 @@ pub(super) struct ChunkListAsset {
 
 #[turbo_tasks::value_impl]
 impl ChunkListAssetVc {
+    /// Creates a new [`ChunkListAsset`].
     #[turbo_tasks::function]
     pub fn new(
         server_root: FileSystemPathVc,

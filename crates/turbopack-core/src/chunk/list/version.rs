@@ -5,10 +5,15 @@ use turbo_tasks_hash::{encode_hex, Xxh3Hash64Hasher};
 
 use crate::version::{Version, VersionVc, VersionedContentMergerVc};
 
+/// The version of a [`ChunkListContent`].
+///
+/// [`ChunkListContent`]: super::content::ChunkListContent
 #[turbo_tasks::value(shared)]
 pub(super) struct ChunkListVersion {
+    /// A map from chunk path to its version.
     #[turbo_tasks(trace_ignore)]
     pub by_path: IndexMap<String, TraitRef<VersionVc>>,
+    /// A map from chunk merger to the version of the merged contents of chunks.
     #[turbo_tasks(trace_ignore)]
     pub by_merger: IndexMap<VersionedContentMergerVc, TraitRef<VersionVc>>,
 }

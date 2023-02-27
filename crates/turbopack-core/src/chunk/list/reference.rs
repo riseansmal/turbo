@@ -12,6 +12,12 @@ use crate::{
     resolve::{ResolveResult, ResolveResultVc},
 };
 
+/// A reference to a [`ChunkListAsset`].
+///
+/// This is the only way to create a [`ChunkListAsset`]. The asset itself will
+/// live under the provided path.
+///
+/// [`ChunkListAsset`]: super::asset::ChunkListAsset
 #[turbo_tasks::value]
 pub struct ChunkListReference {
     server_root: FileSystemPathVc,
@@ -21,6 +27,7 @@ pub struct ChunkListReference {
 
 #[turbo_tasks::value_impl]
 impl ChunkListReferenceVc {
+    /// Creates a new [`ChunkListReference`].
     #[turbo_tasks::function]
     pub fn new(
         server_root: FileSystemPathVc,

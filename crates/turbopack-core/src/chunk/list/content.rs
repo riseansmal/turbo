@@ -17,6 +17,7 @@ use crate::{
     },
 };
 
+/// Contents of a [`super::asset::ChunkListAsset`].
 #[turbo_tasks::value(serialization = "none")]
 pub(super) struct ChunkListContent {
     pub server_root: FileSystemPathReadRef,
@@ -26,6 +27,7 @@ pub(super) struct ChunkListContent {
 
 #[turbo_tasks::value_impl]
 impl ChunkListContentVc {
+    /// Creates a new [`ChunkListContent`].
     #[turbo_tasks::function]
     pub async fn new(server_root: FileSystemPathVc, chunks: ChunksVc) -> Result<Self> {
         let server_root = server_root.await?;
@@ -54,6 +56,7 @@ impl ChunkListContentVc {
         .cell())
     }
 
+    /// Computes the version of this content.
     #[turbo_tasks::function]
     pub async fn version(self) -> Result<ChunkListVersionVc> {
         let this = self.await?;
