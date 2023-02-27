@@ -3,7 +3,7 @@
 use std::sync::Mutex;
 
 use anyhow::Result;
-use turbo_tasks::{get_invalidator, IntoTraitRef, Invalidator};
+use turbo_tasks::{get_invalidator, IntoTraitRef, Invalidator, TraitRef};
 use turbo_tasks_testing::{register, run};
 
 register!();
@@ -24,12 +24,12 @@ async fn trait_ref() {
         assert_eq!(*counter_value.strongly_consistent().await?, 1);
 
         // `ref_counter` will still point to the same `counter` instance as `counter`.
-        let ref_counter = counter.as_counter_trait().into_trait_ref().await?.cell();
+        let ref_counter = TraitRef::cell(counter.as_counter_trait().into_trait_ref().await?);
         let ref_counter_value = ref_counter.get_value();
 
         // However, `local_counter_value` will point to the value of `counter_value`
         // at the time it was turned into a trait reference (just like a `ReadRef` would).
-        let local_counter_value = counter_value.as_counter_value_trait().into_trait_ref().await?.cell().get_value();
+        let local_counter_value = TraitRef::cell(counter_value.as_counter_value_trait().into_trait_ref().await?).get_value();
 
         counter.await?.incr();
 
