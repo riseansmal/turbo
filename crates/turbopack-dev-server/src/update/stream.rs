@@ -108,7 +108,7 @@ impl VersionStateVc {
     #[turbo_tasks::function]
     async fn get(self) -> Result<VersionVc> {
         let this = self.await?;
-        let version = this.version.get().cell();
+        let version = TraitRef::cell(this.version.get().clone());
         Ok(version)
     }
 }

@@ -10,7 +10,7 @@ use crate::{manager::find_cell_by_type, RawVc, SharedReference, ValueTraitVc};
 /// it back into a value trait vc by calling [`ReadRef::cell`].
 ///
 /// Internally it stores a reference counted reference to a value on the heap.
-#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
+#[derive(Debug, Clone, Hash, Eq, PartialEq, Ord, PartialOrd, Serialize, Deserialize)]
 pub struct TraitRef<T>
 where
     T: ?Sized,
@@ -39,12 +39,12 @@ where
 {
     /// Returns a new cell that points to a value that implements the value
     /// trait `T`.
-    pub fn cell(&self) -> T {
+    pub fn cell(trait_ref: TraitRef<T>) -> T {
         // See Safety clause above.
-        let SharedReference(ty, _) = self.shared_reference;
+        let SharedReference(ty, _) = trait_ref.shared_reference;
         let ty = ty.unwrap();
         let local_cell = find_cell_by_type(ty);
-        local_cell.update_shared_reference(self.shared_reference.clone());
+        local_cell.update_shared_reference(trait_ref.shared_reference.clone());
         let raw_vc: RawVc = local_cell.into();
         raw_vc.into()
     }

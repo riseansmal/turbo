@@ -568,6 +568,8 @@ pub fn value(args: TokenStream, input: TokenStream) -> TokenStream {
         }
 
         impl turbo_tasks::Typed for #ident {
+            type Vc = #ref_ident;
+
             fn get_value_type_id() -> turbo_tasks::ValueTypeId {
                 *#value_type_id_ident
             }

@@ -16,25 +16,17 @@ pub trait VersionedContent {
     /// The content of the [Asset].
     fn content(&self) -> AssetContentVc;
 
-    /// Get a unique identifier of the version as a string. There is no way
-    /// to convert a version identifier back to the original `VersionedContent`,
-    /// so the original object needs to be stored somewhere.
+    /// Get a [`Version`] implementor that contains enough information to
+    /// identify and diff a future [`VersionedContent`] against it.
     fn version(&self) -> VersionVc;
 
     /// Describes how to update the content from an earlier version to the
     /// latest available one.
     async fn update(self_vc: VersionedContentVc, from: VersionVc) -> Result<UpdateVc> {
-        // By default, since we can't make any assumptions about the versioning
-        // scheme of the content, we ask for a full invalidation, except in the
-        // case where versions are the same. And we can't compare `VersionVc`s
-        // directly since going through a `TraitRef<VersionVc>` breaks referential
-        // equality checks.
         let to = self_vc.version();
-        let from_id = from.id();
-        let to_id = to.id();
-        let from_id = from_id.await?;
-        let to_id = to_id.await?;
-        Ok(if *from_id == *to_id {
+        let to_ref = to.into_trait_ref().await?;
+        let from_ref = from.into_trait_ref().await?;
+        Ok(if from_ref == to_ref {
             Update::None.into()
         } else {
             Update::Total(TotalUpdate { to }).into()
