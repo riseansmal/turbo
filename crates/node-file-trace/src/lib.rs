@@ -508,6 +508,7 @@ async fn run<B: Backend + 'static, F: Future<Output = ()>>(
 
             let console_ui = ConsoleUiVc::new(TransientInstance::new(LogOptions {
                 current_dir: dir.clone(),
+                project_dir: dir.clone(),
                 show_all,
                 log_detail,
                 log_level: log_level.map_or_else(|| IssueSeverity::Error, |l| l.0),
@@ -562,12 +563,8 @@ async fn main_operation(
             let modules = input_to_modules(fs, input, process_cwd, exact, enable_mdx).await?;
             for module in modules.iter() {
                 let set = all_assets(*module);
-                IssueVc::attach_context(
-                    module.ident().path(),
-                    "gathering list of assets".to_string(),
-                    set,
-                )
-                .await?;
+                IssueVc::attach_context(module.ident().path(), "gathering list of assets", set)
+                    .await?;
                 for asset in set.await?.iter() {
                     let path = asset.ident().path().await?;
                     result.insert(path.path.to_string());

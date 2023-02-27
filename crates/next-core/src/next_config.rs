@@ -14,6 +14,7 @@ use turbopack_core::{
     asset::Asset,
     context::AssetContext,
     ident::AssetIdentVc,
+    issue::IssueVc,
     reference_type::{EntryReferenceSubType, ReferenceType},
     resolve::{
         find_context_file,
@@ -539,6 +540,25 @@ fn next_configs() -> StringsVc {
 
 #[turbo_tasks::function]
 pub async fn load_next_config(execution_context: ExecutionContextVc) -> Result<NextConfigVc> {
+    let ExecutionContext { project_root, .. } = *execution_context.await?;
+    let find_config_result = find_context_file(project_root, next_configs());
+    let config_file = match &*find_config_result.await? {
+        FindContextFileResult::Found(config_path, _) => Some(*config_path),
+        FindContextFileResult::NotFound(_) => None,
+    };
+    Ok(IssueVc::attach_context_or_description(
+        config_file,
+        "Loading Next.js config",
+        load_next_config_internal(execution_context, config_file),
+    )
+    .await?)
+}
+
+#[turbo_tasks::function]
+pub async fn load_next_config_internal(
+    execution_context: ExecutionContextVc,
+    config_file: Option<FileSystemPathVc>,
+) -> Result<NextConfigVc> {
     let ExecutionContext {
         project_root,
         intermediate_output_path,
@@ -552,11 +572,7 @@ pub async fn load_next_config(execution_context: ExecutionContextVc) -> Result<N
     import_map.insert_wildcard_alias("styled-jsx/", ImportMapping::External(None).into());
 
     let context = node_evaluate_asset_context(Some(import_map.cell()), None);
-    let find_config_result = find_context_file(project_root, next_configs());
-    let config_asset = match &*find_config_result.await? {
-        FindContextFileResult::Found(config_path, _) => Some(SourceAssetVc::new(*config_path)),
-        FindContextFileResult::NotFound(_) => None,
-    };
+    let config_asset = config_file.map(|config_path| SourceAssetVc::new(config_path));
 
     let runtime_entries = config_asset.map(|config_asset| {
         // TODO this is a hack to add the config to the bundling to make it watched

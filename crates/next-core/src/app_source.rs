@@ -1,6 +1,7 @@
 use std::{
     collections::{BTreeMap, HashMap},
     io::Write,
+    iter::once,
 };
 
 use anyhow::{anyhow, Result};
@@ -25,7 +26,8 @@ use turbopack_core::{
 use turbopack_dev_server::{
     html::DevHtmlAssetVc,
     source::{
-        combined::CombinedContentSource, ContentSourceData, ContentSourceVc, NoContentSourceVc,
+        combined::CombinedContentSource, issue_context::IssueContextSourceVc, ContentSourceData,
+        ContentSourceVc, NoContentSourceVc,
     },
 };
 use turbopack_ecmascript::{
@@ -475,20 +477,28 @@ async fn create_app_source_for_directory(
             return Ok(NoContentSourceVc::new().into());
         }
     }
-    for child in children.iter() {
-        sources.push(create_app_source_for_directory(
-            *child,
-            context_ssr,
-            context,
-            project_path,
-            server_root,
-            runtime_entries,
-            fallback_page,
-            intermediate_output_path_root,
-        ));
-    }
+    let source = CombinedContentSource { sources }.cell().into();
+    let source =
+        IssueContextSourceVc::new_context(directory, "Next.js app directory", source).into();
 
-    Ok(CombinedContentSource { sources }.cell().into())
+    Ok(CombinedContentSource {
+        sources: once(source)
+            .chain(children.iter().map(|child| {
+                create_app_source_for_directory(
+                    *child,
+                    context_ssr,
+                    context,
+                    project_path,
+                    server_root,
+                    runtime_entries,
+                    fallback_page,
+                    intermediate_output_path_root,
+                )
+            }))
+            .collect(),
+    }
+    .cell()
+    .into())
 }
 
 /// The renderer for pages in app directory

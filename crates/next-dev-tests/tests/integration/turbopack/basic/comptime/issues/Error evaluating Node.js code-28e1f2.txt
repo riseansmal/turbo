@@ -8,4 +8,12 @@ PlainIssue {
     documentation_link: "",
     source: None,
     sub_issues: [],
+    processing_path: Some(
+        [
+            PlainIssueProcessingPathItem {
+                context: None,
+                description: "Next.js Routing for GET /_chunks/index_e7cdb3.js",
+            },
+        ],
+    ),
 }

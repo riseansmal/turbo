@@ -13,6 +13,7 @@ use turbopack_core::{
     asset::{Asset, AssetContent, AssetContentVc, AssetVc},
     context::{AssetContext, AssetContextVc},
     ident::AssetIdentVc,
+    issue::IssueVc,
     reference_type::{EntryReferenceSubType, ReferenceType},
     resolve::{find_context_file, FindContextFileResult},
     source_asset::SourceAssetVc,
@@ -117,7 +118,15 @@ impl Asset for PostCssTransformedAsset {
 
     #[turbo_tasks::function]
     async fn content(self_vc: PostCssTransformedAssetVc) -> Result<AssetContentVc> {
-        Ok(self_vc.process().await?.content)
+        let this = self_vc.await?;
+        Ok(IssueVc::attach_context(
+            this.source.ident().path(),
+            "PostCSS processing",
+            self_vc.process(),
+        )
+        .await?
+        .await?
+        .content)
     }
 }
 
