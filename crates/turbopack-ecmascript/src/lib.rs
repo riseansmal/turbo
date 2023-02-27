@@ -148,8 +148,15 @@ impl EcmascriptModuleAssetVc {
         self_vc: EcmascriptModuleAssetVc,
         context: ChunkingContextVc,
         runtime_entries: Option<EcmascriptChunkPlaceablesVc>,
+        chunk_list_path: Option<FileSystemPathVc>,
     ) -> Result<ChunkVc> {
-        Ok(EcmascriptChunkVc::new_evaluate(context, self_vc.into(), runtime_entries).into())
+        Ok(EcmascriptChunkVc::new_evaluate(
+            context,
+            self_vc.into(),
+            runtime_entries,
+            chunk_list_path,
+        )
+        .into())
     }
 
     #[turbo_tasks::function]

@@ -35,6 +35,9 @@ pub struct EcmascriptChunkItemContent {
 pub struct EcmascriptChunkItemOptions {
     pub module: bool,
     pub exports: bool,
+    /// Indicates that this chunk item is a chunk loader. This gives it access
+    /// to the `registerChunkList` runtime method.
+    pub loader: bool,
     pub this: bool,
     pub placeholder_for_future_extensions: (),
 }

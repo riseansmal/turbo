@@ -75,8 +75,11 @@ pub async fn create_web_entry_source(
         .enumerate()
         .map(|(i, module)| async move {
             if let Some(ecmascript) = EcmascriptModuleAssetVc::resolve_from(module).await? {
-                Ok(ecmascript
-                    .as_evaluated_chunk(chunking_context, (i == 0).then_some(runtime_entries)))
+                Ok(ecmascript.as_evaluated_chunk(
+                    chunking_context,
+                    (i == 0).then_some(runtime_entries),
+                    None,
+                ))
             } else if let Some(chunkable) = ChunkableAssetVc::resolve_from(module).await? {
                 // TODO this is missing runtime code, so it's probably broken and we should also
                 // add an ecmascript chunk with the runtime code

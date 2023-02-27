@@ -246,7 +246,7 @@ async fn run_test(resource: String) -> Result<FileSystemPathVc> {
         .map(|module| async move {
             if let Some(ecmascript) = EcmascriptModuleAssetVc::resolve_from(module).await? {
                 // TODO: Load runtime entries from snapshots
-                Ok(ecmascript.as_evaluated_chunk(chunking_context, runtime_entries))
+                Ok(ecmascript.as_evaluated_chunk(chunking_context, runtime_entries, None))
             } else if let Some(chunkable) = ChunkableAssetVc::resolve_from(module).await? {
                 Ok(chunkable.as_chunk(chunking_context))
             } else {

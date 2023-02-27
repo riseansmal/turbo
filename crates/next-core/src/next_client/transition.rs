@@ -94,6 +94,7 @@ impl Transition for NextClientTransition {
             asset: chunkable_asset,
             chunking_context: self.client_chunking_context,
             base_path: self.server_root.join("_next"),
+            server_root: self.server_root,
             runtime_entries: Some(runtime_entries),
         };
 

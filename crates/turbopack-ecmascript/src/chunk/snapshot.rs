@@ -115,10 +115,6 @@ impl EcmascriptChunkContentEntry {
     pub fn code(&self) -> &Code {
         &self.code
     }
-
-    pub fn source_code(&self) -> &Rope {
-        self.code.source_code()
-    }
 }
 
 #[turbo_tasks::value_impl]

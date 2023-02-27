@@ -126,9 +126,11 @@ pub async fn get_evaluate_pool(
 
     let bootstrap = NodeJsBootstrapAsset {
         path,
-        chunk_group: ChunkGroupVc::from_chunk(
-            entry_module.as_evaluated_chunk(chunking_context, runtime_entries),
-        ),
+        chunk_group: ChunkGroupVc::from_chunk(entry_module.as_evaluated_chunk(
+            chunking_context,
+            runtime_entries,
+            None,
+        )),
     };
     emit(bootstrap.cell().into(), intermediate_output_path).await?;
     let pool = NodeJsPool::new(

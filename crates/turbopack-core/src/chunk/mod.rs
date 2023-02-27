@@ -1,5 +1,6 @@
 pub mod chunk_in_group;
 pub mod dev;
+pub(crate) mod list;
 pub mod optimize;
 
 use std::{
@@ -24,6 +25,7 @@ use turbo_tasks::{
 use turbo_tasks_fs::FileSystemPathVc;
 use turbo_tasks_hash::DeterministicHash;
 
+pub use self::list::reference::{ChunkListReference, ChunkListReferenceVc};
 use self::{chunk_in_group::ChunkInGroupVc, optimize::optimize};
 use crate::{
     asset::{Asset, AssetVc, AssetsVc},

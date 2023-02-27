@@ -58,7 +58,7 @@ pub async fn render_static(
     data: RenderDataVc,
 ) -> Result<StaticResultVc> {
     let intermediate_asset = get_intermediate_asset(
-        module.as_evaluated_chunk(chunking_context, Some(runtime_entries)),
+        module.as_evaluated_chunk(chunking_context, Some(runtime_entries), None),
         intermediate_output_path,
     );
     let renderer_pool = get_renderer_pool(

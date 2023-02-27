@@ -106,7 +106,7 @@ pub async fn external_asset_entrypoints(
 ) -> Result<AssetsSetVc> {
     Ok(separate_assets(
         get_intermediate_asset(
-            module.as_evaluated_chunk(chunking_context, Some(runtime_entries)),
+            module.as_evaluated_chunk(chunking_context, Some(runtime_entries), None),
             intermediate_output_path,
         )
         .resolve()

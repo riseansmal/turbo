@@ -3,6 +3,7 @@ pub(crate) mod context;
 pub(crate) mod evaluate;
 pub(crate) mod item;
 pub(crate) mod manifest;
+pub(crate) mod merged;
 pub(crate) mod module_factory;
 pub(crate) mod optimize;
 pub(crate) mod placeable;
@@ -96,6 +97,7 @@ impl EcmascriptChunkVc {
         context: ChunkingContextVc,
         main_entry: EcmascriptChunkPlaceableVc,
         runtime_entries: Option<EcmascriptChunkPlaceablesVc>,
+        chunk_list_path: Option<FileSystemPathVc>,
     ) -> Result<Self> {
         let mut entries = Vec::new();
         if let Some(runtime_entries) = runtime_entries {
@@ -111,6 +113,7 @@ impl EcmascriptChunkVc {
                 EcmascriptChunkEvaluate {
                     evaluate_entries: entries,
                     chunk_group: None,
+                    chunk_list_path,
                 }
                 .cell(),
             ),

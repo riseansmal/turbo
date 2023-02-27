@@ -191,9 +191,11 @@ impl Introspectable for NodeApiContentSource {
             set.insert((
                 StringVc::cell("intermediate asset".to_string()),
                 IntrospectableAssetVc::new(get_intermediate_asset(
-                    entry
-                        .module
-                        .as_evaluated_chunk(entry.chunking_context, Some(self.runtime_entries)),
+                    entry.module.as_evaluated_chunk(
+                        entry.chunking_context,
+                        Some(self.runtime_entries),
+                        None,
+                    ),
                     entry.intermediate_output_path,
                 )),
             ));

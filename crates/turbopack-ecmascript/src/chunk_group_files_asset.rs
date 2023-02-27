@@ -5,8 +5,8 @@ use turbo_tasks_fs::FileSystemPathVc;
 use turbopack_core::{
     asset::{Asset, AssetContentVc, AssetVc},
     chunk::{
-        ChunkGroupVc, ChunkItem, ChunkItemVc, ChunkReferenceVc, ChunkVc, ChunkableAsset,
-        ChunkableAssetVc, ChunkingContextVc, ChunksVc,
+        ChunkGroupVc, ChunkItem, ChunkItemVc, ChunkListReferenceVc, ChunkReferenceVc, ChunkVc,
+        ChunkableAsset, ChunkableAssetVc, ChunkingContext, ChunkingContextVc,
     },
     reference::AssetReferencesVc,
 };
@@ -27,23 +27,34 @@ pub struct ChunkGroupFilesAsset {
     pub asset: ChunkableAssetVc,
     pub chunking_context: ChunkingContextVc,
     pub base_path: FileSystemPathVc,
+    pub server_root: FileSystemPathVc,
     pub runtime_entries: Option<EcmascriptChunkPlaceablesVc>,
 }
 
 #[turbo_tasks::value_impl]
 impl ChunkGroupFilesAssetVc {
     #[turbo_tasks::function]
-    async fn chunks(self) -> Result<ChunksVc> {
+    async fn chunk_group(self) -> Result<ChunkGroupVc> {
         let this = self.await?;
         let chunk_group =
             if let Some(ecma) = EcmascriptModuleAssetVc::resolve_from(this.asset).await? {
-                ChunkGroupVc::from_chunk(
-                    ecma.as_evaluated_chunk(this.chunking_context, this.runtime_entries),
-                )
+                ChunkGroupVc::from_chunk(ecma.as_evaluated_chunk(
+                    this.chunking_context,
+                    this.runtime_entries,
+                    Some(self.chunk_list_path()),
+                ))
             } else {
                 ChunkGroupVc::from_asset(this.asset, this.chunking_context)
             };
-        Ok(chunk_group.chunks())
+        Ok(chunk_group)
+    }
+
+    #[turbo_tasks::function]
+    async fn chunk_list_path(self) -> Result<FileSystemPathVc> {
+        let this = &*self.await?;
+        Ok(this
+            .chunking_context
+            .chunk_path(this.asset.path().join("chunk-list.json"), ".json"))
     }
 }
 
@@ -51,7 +62,7 @@ impl ChunkGroupFilesAssetVc {
 impl Asset for ChunkGroupFilesAsset {
     #[turbo_tasks::function]
     fn path(&self) -> FileSystemPathVc {
-        self.asset.path().join("client-transition.js")
+        self.asset.path().join("chunk-group-files.js")
     }
 
     #[turbo_tasks::function]
@@ -105,7 +116,7 @@ impl ValueToString for ChunkGroupFilesChunkItem {
     #[turbo_tasks::function]
     async fn to_string(&self) -> Result<StringVc> {
         Ok(StringVc::cell(format!(
-            "{}/chunk_group_files.js",
+            "{}/chunk-group-files.js",
             self.inner.await?.asset.path().to_string().await?
         )))
     }
@@ -125,7 +136,7 @@ impl EcmascriptChunkItem for ChunkGroupFilesChunkItem {
 
     #[turbo_tasks::function]
     async fn content(&self) -> Result<EcmascriptChunkItemContentVc> {
-        let chunks = self.inner.chunks();
+        let chunks = self.inner.chunk_group().chunks();
         let mut data = Vec::new();
         let base_path = self.inner.await?.base_path.await?;
         for chunk in chunks.await?.iter() {
@@ -146,16 +157,26 @@ impl EcmascriptChunkItem for ChunkGroupFilesChunkItem {
 impl ChunkItem for ChunkGroupFilesChunkItem {
     #[turbo_tasks::function]
     async fn references(&self) -> Result<AssetReferencesVc> {
-        let chunks = self.inner.chunks();
+        let chunk_group = self.inner.chunk_group();
+        let chunks = chunk_group.chunks();
 
-        Ok(AssetReferencesVc::cell(
-            chunks
-                .await?
-                .iter()
-                .copied()
-                .map(ChunkReferenceVc::new)
-                .map(Into::into)
-                .collect(),
-        ))
+        let mut references: Vec<_> = chunks
+            .await?
+            .iter()
+            .copied()
+            .map(ChunkReferenceVc::new)
+            .map(Into::into)
+            .collect();
+
+        references.push(
+            ChunkListReferenceVc::new(
+                self.inner.await?.server_root,
+                chunk_group,
+                self.inner.chunk_list_path(),
+            )
+            .into(),
+        );
+
+        Ok(AssetReferencesVc::cell(references))
     }
 }
