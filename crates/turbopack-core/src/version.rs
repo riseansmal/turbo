@@ -4,7 +4,6 @@ use turbo_tasks::{
     debug::ValueDebugFormat,
     primitives::{JsonValueVc, StringVc},
     trace::TraceRawVcs,
-    IntoTraitRef,
 };
 use turbo_tasks_fs::{FileContent, FileContentReadRef, LinkType};
 use turbo_tasks_hash::{encode_hex, hash_xxh3_hash64};
@@ -24,10 +23,17 @@ pub trait VersionedContent {
     /// Describes how to update the content from an earlier version to the
     /// latest available one.
     async fn update(self_vc: VersionedContentVc, from: VersionVc) -> Result<UpdateVc> {
+        // By default, since we can't make any assumptions about the versioning
+        // scheme of the content, we ask for a full invalidation, except in the
+        // case where versions are the same. We can't compare `VersionVc`s directly
+        // since `self_vc` might have been converted from a `ReadRef` or a `ReadRef`, in
+        // which case `self_vc.version()` would return a new `VersionVc`.
         let to = self_vc.version();
-        let to_ref = to.into_trait_ref().await?;
-        let from_ref = from.into_trait_ref().await?;
-        Ok(if from_ref == to_ref {
+        let from_id = from.id();
+        let to_id = to.id();
+        let from_id = from_id.await?;
+        let to_id = to_id.await?;
+        Ok(if *from_id == *to_id {
             Update::None.into()
         } else {
             Update::Total(TotalUpdate { to }).into()
