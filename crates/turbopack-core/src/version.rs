@@ -4,6 +4,7 @@ use turbo_tasks::{
     debug::ValueDebugFormat,
     primitives::{JsonValueVc, StringVc},
     trace::TraceRawVcs,
+    IntoTraitRef,
 };
 use turbo_tasks_fs::{FileContent, FileContentReadRef, LinkType};
 use turbo_tasks_hash::{encode_hex, hash_xxh3_hash64};
