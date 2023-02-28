@@ -37,6 +37,7 @@ members = [
   "crates/turbopack-node",
   "crates/turbopack-static",
   "crates/turbopack-swc-utils",
+  "crates/turbopack-test-utils",
   "crates/turbopack-tests",
   "crates/turborepo",
   "crates/turborepo-ffi",
@@ -80,6 +81,7 @@ default-members = [
   "crates/turbopack-node",
   "crates/turbopack-static",
   "crates/turbopack-swc-utils",
+  "crates/turbopack-test-utils",
   "crates/turbopack-tests",
   "xtask",
 ]
@@ -139,6 +141,7 @@ turbopack-mdx = { path = "crates/turbopack-mdx" }
 turbopack-node = { path = "crates/turbopack-node" }
 turbopack-static = { path = "crates/turbopack-static" }
 turbopack-swc-utils = { path = "crates/turbopack-swc-utils" }
+turbopack-test-utils = { path = "crates/turbopack-test-utils" }
 turbopack-tests = { path = "crates/turbopack-tests" }
 turborepo = { path = "crates/turborepo" }
 turborepo-ffi = { path = "crates/turborepo-ffi" }
