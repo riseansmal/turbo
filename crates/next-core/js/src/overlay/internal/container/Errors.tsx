@@ -200,14 +200,14 @@ export function Errors({ issues, errors }: ErrorsProps) {
   const isClosable = true;
 
   const defaultTab =
-    TAB_PRIORITY.filter(
+    TAB_PRIORITY.find(
       (tabId) =>
         ({
           [TabId.TurbopackErrors]: turbopackErrors.length > 0,
           [TabId.TurbopackWarnings]: turbopackWarnings.length > 0,
           [TabId.RuntimeErrors]: hasErrors,
         }[tabId])
-    )[0] ?? TabId.RuntimeErrors;
+    ) ?? TabId.RuntimeErrors;
 
   const [selectedTab, setSelectedTab] = React.useState<string>(defaultTab);
 
