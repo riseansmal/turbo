@@ -90,5 +90,6 @@ pub async fn get_fallback_page(
     Ok(DevHtmlAssetVc::new(
         dev_server_root.join("fallback.html"),
         vec![ChunkGroupVc::from_chunk(chunk)],
+        vec![],
     ))
 }

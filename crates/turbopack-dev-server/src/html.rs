@@ -6,7 +6,7 @@ use turbo_tasks_hash::{encode_hex, Xxh3Hash64Hasher};
 use turbopack_core::{
     asset::{Asset, AssetContentVc, AssetVc},
     chunk::{ChunkGroupVc, ChunkReferenceVc},
-    reference::AssetReferencesVc,
+    reference::{AssetReferenceVc, AssetReferencesVc},
     version::{Version, VersionVc, VersionedContent, VersionedContentVc},
 };
 
@@ -18,6 +18,7 @@ use turbopack_core::{
 pub struct DevHtmlAsset {
     path: FileSystemPathVc,
     chunk_groups: Vec<ChunkGroupVc>,
+    additional_references: Vec<AssetReferenceVc>,
     body: Option<String>,
 }
 
@@ -42,6 +43,7 @@ impl Asset for DevHtmlAsset {
                 references.push(ChunkReferenceVc::new(*chunk).into());
             }
         }
+        references.extend(self.additional_references.clone());
         Ok(AssetReferencesVc::cell(references))
     }
 
@@ -53,10 +55,15 @@ impl Asset for DevHtmlAsset {
 
 impl DevHtmlAssetVc {
     /// Create a new dev HTML asset.
-    pub fn new(path: FileSystemPathVc, chunk_groups: Vec<ChunkGroupVc>) -> Self {
+    pub fn new(
+        path: FileSystemPathVc,
+        chunk_groups: Vec<ChunkGroupVc>,
+        additional_references: Vec<AssetReferenceVc>,
+    ) -> Self {
         DevHtmlAsset {
             path,
             chunk_groups,
+            additional_references,
             body: None,
         }
         .cell()
@@ -71,6 +78,7 @@ impl DevHtmlAssetVc {
         DevHtmlAsset {
             path,
             chunk_groups,
+            additional_references: vec![],
             body: Some(body),
         }
         .cell()

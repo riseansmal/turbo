@@ -4,7 +4,10 @@ use turbo_tasks_env::ProcessEnvVc;
 use turbo_tasks_fs::FileSystemPathVc;
 use turbopack::ecmascript::EcmascriptModuleAssetVc;
 use turbopack_core::{
-    chunk::{ChunkGroupVc, ChunkableAsset, ChunkableAssetVc},
+    asset::Asset,
+    chunk::{
+        ChunkGroupVc, ChunkListReferenceVc, ChunkableAsset, ChunkableAssetVc, ChunkingContext,
+    },
     reference_type::{EntryReferenceSubType, ReferenceType},
     resolve::{origin::PlainResolveOriginVc, parse::RequestVc},
 };
@@ -69,21 +72,33 @@ pub async fn create_web_entry_source(
         })
         .try_join()
         .await?;
-    let chunks: Vec<_> = entries
+
+    let chunk_groups_with_references: Vec<_> = entries
         .into_iter()
         .flatten()
         .enumerate()
         .map(|(i, module)| async move {
             if let Some(ecmascript) = EcmascriptModuleAssetVc::resolve_from(module).await? {
-                Ok(ecmascript.as_evaluated_chunk(
+                let chunk_list_path =
+                    chunking_context.chunk_path(module.path().join("chunk-list.json"), ".json");
+                let chunk = ecmascript.as_evaluated_chunk(
                     chunking_context,
                     (i == 0).then_some(runtime_entries),
-                    None,
-                ))
+                    Some(chunk_list_path),
+                );
+                let chunk_group = ChunkGroupVc::from_chunk(chunk);
+                let additional_references =
+                    vec![
+                        ChunkListReferenceVc::new(server_root, chunk_group, chunk_list_path).into(),
+                    ];
+                Ok((chunk_group, additional_references))
             } else if let Some(chunkable) = ChunkableAssetVc::resolve_from(module).await? {
                 // TODO this is missing runtime code, so it's probably broken and we should also
                 // add an ecmascript chunk with the runtime code
-                Ok(chunkable.as_chunk(chunking_context))
+                Ok((
+                    ChunkGroupVc::from_chunk(chunkable.as_chunk(chunking_context)),
+                    vec![],
+                ))
             } else {
                 // TODO convert into a serve-able asset
                 Err(anyhow!(
@@ -95,9 +110,14 @@ pub async fn create_web_entry_source(
         .try_join()
         .await?;
 
+    let (chunk_groups, additional_references): (Vec<_>, Vec<_>) =
+        chunk_groups_with_references.into_iter().unzip();
+    let additional_references = additional_references.into_iter().flatten().collect();
+
     let entry_asset = DevHtmlAssetVc::new(
         server_root.join("index.html"),
-        chunks.into_iter().map(ChunkGroupVc::from_chunk).collect(),
+        chunk_groups,
+        additional_references,
     )
     .into();
 
