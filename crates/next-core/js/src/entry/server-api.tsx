@@ -6,7 +6,6 @@ import "next/dist/server/node-polyfill-fetch.js";
 
 import * as allExports from ".";
 import { apiResolver } from "next/dist/server/api-utils/node";
-import { IncomingMessage, ServerResponse } from "node:http";
 import {
   NodeNextRequest,
   NodeNextResponse,
