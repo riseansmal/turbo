@@ -44,7 +44,7 @@ where
         let SharedReference(ty, _) = trait_ref.shared_reference;
         let ty = ty.unwrap();
         let local_cell = find_cell_by_type(ty);
-        local_cell.update_shared_reference(trait_ref.shared_reference.clone());
+        local_cell.update_shared_reference(trait_ref.shared_reference);
         let raw_vc: RawVc = local_cell.into();
         raw_vc.into()
     }

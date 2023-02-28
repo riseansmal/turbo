@@ -172,7 +172,7 @@ impl CellContent {
         T: ValueTraitVc,
     {
         let shared_reference = self.0.ok_or_else(|| anyhow!("Cell is empty"))?;
-        if let None = shared_reference.0 {
+        if shared_reference.0.is_none() {
             bail!("Cell content is untyped");
         }
         Ok(

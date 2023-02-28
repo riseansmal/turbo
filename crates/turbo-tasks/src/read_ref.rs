@@ -172,10 +172,8 @@ where
     pub fn cell(trait_ref: ReadRef<T, U>) -> T::Vc {
         // See Safety clause above.
         let local_cell = find_cell_by_type(T::get_value_type_id());
-        local_cell.update_shared_reference(SharedReference(
-            Some(T::get_value_type_id()),
-            trait_ref.0.clone(),
-        ));
+        local_cell
+            .update_shared_reference(SharedReference(Some(T::get_value_type_id()), trait_ref.0));
         let raw_vc: RawVc = local_cell.into();
         raw_vc.into()
     }
