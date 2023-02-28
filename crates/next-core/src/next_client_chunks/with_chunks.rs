@@ -145,10 +145,10 @@ impl EcmascriptChunkItem for WithChunksChunkItem {
         let chunk_list_path = self_vc.chunk_list_path().await?;
         eprintln!(
             "chunk_list_path: {} vs {}",
-            chunk_list_path.to_string(),
-            server_root.to_string()
+            chunk_list_path,
+            server_root
         );
-        let chunk_list_path = if let Some(path) = server_root.get_path_to(&*chunk_list_path) {
+        let chunk_list_path = if let Some(path) = server_root.get_path_to(&chunk_list_path) {
             path
         } else {
             bail!("could not get path to chunk list");

@@ -100,7 +100,7 @@ impl<P: SourceProvider + Clone + Send + Sync> UpdateServer<P> {
         resource: ResourceIdentifier,
         item: &UpdateStreamItem,
     ) -> Result<()> {
-        match &*item {
+        match item {
             UpdateStreamItem::NotFound => {
                 // If the resource was not found, we remove the stream and indicate that to the
                 // client.

@@ -169,7 +169,7 @@ impl EcmascriptChunkItem for ManifestLoaderItem {
             chunks_list_path = stringify_js(
                 output_root
                     .get_path_to(&*self_vc.chunks_list_path().await?)
-                    .ok_or(anyhow!("manifest list path is not in output root"))?
+                    .ok_or(anyhow!("chunk list path is not in output root"))?
             )
         )?;
 

@@ -82,7 +82,7 @@ impl ChunkListContentVc {
         let by_merger = by_merger
             .into_iter()
             .map(|(merger, contents)| {
-                let merger = merger.clone();
+                let merger = merger;
                 async move {
                     Ok((
                         merger,

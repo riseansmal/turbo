@@ -45,7 +45,7 @@ pub(super) async fn update_ecmascript_chunk(
     let mut deleted = IndexMap::new();
 
     for (id, from_hash) in &from.module_factories_hashes {
-        let id = &*id;
+        let id = id;
         if let Some(entry) = module_factories.remove(id) {
             if entry.hash != *from_hash {
                 modified.insert(id.clone(), entry.code.clone());

@@ -80,7 +80,7 @@ impl EcmascriptModuleEntry {
         struct Id<'a> {
             id: &'a ModuleId,
         }
-        let id = serde_qs::to_string(&Id { id: &*id }).unwrap();
+        let id = serde_qs::to_string(&Id { id }).unwrap();
         EcmascriptModuleEntry {
             // Cloning a rope is cheap.
             code: code.source_code().clone(),
@@ -179,7 +179,7 @@ pub(super) async fn update_ecmascript_merged_chunk(
 
         let Some(chunk_server_path) = content_ref
                 .output_root
-                .get_path_to(&*content_ref.chunk_path) else {
+                .get_path_to(&content_ref.chunk_path) else {
                     continue;
                 };
 
@@ -200,11 +200,11 @@ pub(super) async fn update_ecmascript_merged_chunk(
                         for (module_id, (module_hash, module_code)) in &chunk_partial.added {
                             partial.added.insert(module_id.clone());
 
-                            if merged_module_map.get(&*module_id) != Some(*module_hash) {
+                            if merged_module_map.get(module_id) != Some(*module_hash) {
                                 merged_update.entries.insert(
                                     module_id.clone(),
                                     EcmascriptModuleEntry::new(
-                                        &*module_id,
+                                        module_id,
                                         module_code.clone(),
                                         chunk_server_path,
                                     ),
@@ -220,7 +220,7 @@ pub(super) async fn update_ecmascript_merged_chunk(
                             merged_update.entries.insert(
                                 module_id.clone(),
                                 EcmascriptModuleEntry::new(
-                                    &*module_id,
+                                    module_id,
                                     module_code.clone(),
                                     chunk_server_path,
                                 ),
@@ -237,11 +237,11 @@ pub(super) async fn update_ecmascript_merged_chunk(
                 for entry in &content_ref.module_factories {
                     added.modules.insert(entry.id.clone());
 
-                    if merged_module_map.get(&*entry.id) != Some(entry.hash) {
+                    if merged_module_map.get(&entry.id) != Some(entry.hash) {
                         merged_update.entries.insert(
                             entry.id.clone(),
                             EcmascriptModuleEntry::new(
-                                &*entry.id,
+                                &entry.id,
                                 entry.code.clone(),
                                 chunk_server_path,
                             ),
