@@ -21,6 +21,7 @@ test-case = "3.0.0"
 
 [dependencies]
 anyhow = { version = "1.0.65", features = ["backtrace"] }
+async-io = "1.12.0"
 atty = "0.2"
 axum = "0.6.2"
 axum-server = "0.4.4"
@@ -56,9 +57,12 @@ sysinfo = "0.27.7"
 thiserror = "1.0.38"
 tiny-gradient = "0.1"
 tokio = { version = "1.24.2", features = ["full", "time"] }
+tokio-stream = "0.1.12"
+tokio-util = { version = "0.7.7", features = ["compat"] }
 tonic = "0.8.3"
 tower = "0.4.13"
 turbo-updater = { path = "../turbo-updater" }
+uds_windows = "1.0.2"
 url = "2.3.1"
 webbrowser = "0.8.4"
 
