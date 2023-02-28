@@ -18,7 +18,7 @@ use crate::{
     chunk::{
         item::{
             EcmascriptChunkItem, EcmascriptChunkItemContent, EcmascriptChunkItemContentVc,
-            EcmascriptChunkItemOptions, EcmascriptChunkItemVc,
+            EcmascriptChunkItemVc,
         },
         placeable::{EcmascriptChunkPlaceable, EcmascriptChunkPlaceableVc},
     },
@@ -175,10 +175,6 @@ impl EcmascriptChunkItem for ManifestLoaderItem {
 
         Ok(EcmascriptChunkItemContent {
             inner_code: code.into(),
-            options: EcmascriptChunkItemOptions {
-                loader: true,
-                ..Default::default()
-            },
             ..Default::default()
         }
         .into())

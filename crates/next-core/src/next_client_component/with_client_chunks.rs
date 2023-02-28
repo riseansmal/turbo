@@ -20,6 +20,7 @@ use turbopack_core::{
     reference::{AssetReference, AssetReferenceVc, AssetReferencesVc},
     resolve::{ResolveResult, ResolveResultVc},
 };
+use turbopack_ecmascript::utils::stringify_js_pretty;
 
 use crate::next_client_chunks::in_chunking_context_asset::InChunkingContextAsset;
 
@@ -142,12 +143,11 @@ impl EcmascriptChunkItem for WithClientChunksChunkItem {
                 r#"
                     __turbopack_esm__({{
                         default: () => __turbopack_import__({}),
-                        chunks: () => chunks
+                        chunks: () => {},
                     }});
-                    const chunks = {};
                 "#,
                 module_id,
-                stringify_js(&client_chunks)
+                stringify_js_pretty(&client_chunks),
             )
             .into(),
             ..Default::default()
@@ -159,13 +159,14 @@ impl EcmascriptChunkItem for WithClientChunksChunkItem {
 #[turbo_tasks::value_impl]
 impl ChunkItem for WithClientChunksChunkItem {
     #[turbo_tasks::function]
-    async fn references(&self) -> Result<AssetReferencesVc> {
-        let inner = self.inner.await?;
+    async fn references(self_vc: WithClientChunksChunkItemVc) -> Result<AssetReferencesVc> {
+        let this = self_vc.await?;
+        let inner = this.inner.await?;
         Ok(AssetReferencesVc::cell(vec![
             WithClientChunksAssetReference {
                 asset: InChunkingContextAsset {
                     asset: inner.asset,
-                    chunking_context: self.context,
+                    chunking_context: this.context,
                 }
                 .cell()
                 .into(),

@@ -17,6 +17,7 @@ pub(super) async fn module_factory(content: EcmascriptChunkItemContentVc) -> Res
         "v: __turbopack_export_value__",
         "c: __turbopack_cache__",
         "l: __turbopack_load__",
+        "k: __turbopack_register_chunk_list__",
         "j: __turbopack_cjs__",
         "p: process",
         "g: global",
@@ -28,9 +29,6 @@ pub(super) async fn module_factory(content: EcmascriptChunkItemContentVc) -> Res
     }
     if content.options.exports {
         args.push("e: exports");
-    }
-    if content.options.loader {
-        args.push("k: __turbopack_register_chunk_list__");
     }
     let mut code = CodeBuilder::default();
     let args = FormatIter(|| args.iter().copied().intersperse(", "));
