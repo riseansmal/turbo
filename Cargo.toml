@@ -85,9 +85,6 @@ default-members = [
 [profile.dev.package.turbo-tasks-macros]
 opt-level = 3
 
-[profile.release.package.next-core]
-debug-assertions = true
-
 # Set the settings for build scripts and proc-macros.
 [profile.dev.build-override]
 opt-level = 3
