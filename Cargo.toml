@@ -4,6 +4,7 @@ resolver = "2"
 members = [
   "crates/auto-hash-map",
   "crates/next-binding",
+  "crates/next-build",
   "crates/next-core",
   "crates/next-dev",
   "crates/next-dev-tests",
@@ -47,6 +48,7 @@ members = [
 default-members = [
   "crates/auto-hash-map",
   "crates/next-binding",
+  "crates/next-build",
   "crates/next-core",
   "crates/next-dev",
   "crates/next-transform-dynamic",

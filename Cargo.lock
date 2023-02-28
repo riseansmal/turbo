@@ -3731,6 +3731,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "next-build"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "clap 4.1.4",
+ "console-subscriber",
+ "next-core",
+ "serde",
+ "tokio",
+ "turbo-malloc",
+ "turbo-tasks",
+ "turbo-tasks-build",
+ "turbo-tasks-fs",
+ "turbo-tasks-memory",
+ "turbopack-cli-utils",
+ "turbopack-core",
+ "vergen",
+]
+
+[[package]]
 name = "next-core"
 version = "0.1.0"
 dependencies = [
