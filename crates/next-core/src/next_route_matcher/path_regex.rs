@@ -52,6 +52,7 @@ impl RouteMatcher for PathRegex {
                                 value
                                     .as_str()
                                     .split('/')
+                                    .filter(|segment| !segment.is_empty())
                                     .map(|segment| segment.to_string())
                                     .collect(),
                             ),
