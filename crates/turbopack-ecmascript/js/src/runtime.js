@@ -82,10 +82,12 @@ const moduleChunksMap = new Map();
  */
 const chunkModulesMap = new Map();
 /**
- * The chunk list that contains the runtime.
- * @type {ChunkPath | undefined}
+ * Chunk lists that contain a runtime. When these chunk lists receive an update
+ * that can't be reconciled with the current state of the page, we need to
+ * reload the runtime entirely.
+ * @type {Set<ChunkPath>}
  */
-let runtimeChunkList;
+const runtimeChunkLists = new Set();
 /**
  * Map from chunk list to the chunk paths it contains.
  * @type {Map<ChunkPath, Set<ChunkPath>>}
@@ -997,8 +999,8 @@ function handleApply(chunkListPath, update) {
       // This indicates that the chunk list no longer exists: either the dynamic import which created it was removed,
       // or the page itself was deleted.
       // If it is a dynamic import, we simply discard all modules that the chunk has exclusive access to.
-      // If it is the page itself, we restart the application.
-      if (chunkListPath === runtimeChunkList) {
+      // If it is a runtime chunk list, we restart the application.
+      if (runtimeChunkLists.has(chunkListPath)) {
         BACKEND.restart();
       } else {
         disposeChunkList(chunkListPath);
@@ -1255,20 +1257,32 @@ function registerChunkList(chunkListPath, chunkPaths) {
   }
 }
 
-function registerChunkListAndMarkAsRuntimeChunk(chunkListPath, chunkPaths) {
+/**
+ * Registers a chunk list and marks it as a runtime chunk list. This is called
+ * by the runtime of evaluated chunks.
+ *
+ * @param {ChunkPath} chunkListPath
+ * @param {ChunkPath[]} chunkPaths
+ */
+function registerChunkListAndMarkAsRuntime(chunkListPath, chunkPaths) {
   registerChunkList(chunkListPath, chunkPaths);
   markChunkListAsRuntime(chunkListPath);
 }
 
+/**
+ * Marks a chunk list as a runtime chunk list. There can be more than one
+ * runtime chunk list. For instance, integration tests can have multiple chunk
+ * groups loaded at runtime, each with its own chunk list.
+ *
+ * @param {ChunkPath} chunkListPath
+ */
 function markChunkListAsRuntime(chunkListPath) {
-  if (runtimeChunkList != null) {
-    throw new Error(
-      `Multiple runtime chunk lists detected: \`${runtimeChunkList}\`, then \`${chunkListPath}\``
-    );
-  }
-  runtimeChunkList = chunkListPath;
+  runtimeChunkLists.add(chunkListPath);
 }
 
+/**
+ * @param {ChunkPath} chunkPath
+ */
 function markChunkAsLoaded(chunkPath) {
   const chunkLoader = chunkLoaders.get(chunkPath);
   if (!chunkLoader) {
@@ -1289,7 +1303,7 @@ const runtime = {
   modules: moduleFactories,
   cache: moduleCache,
   instantiateRuntimeModule,
-  registerChunkList: registerChunkListAndMarkAsRuntimeChunk,
+  registerChunkList: registerChunkListAndMarkAsRuntime,
 };
 
 /**

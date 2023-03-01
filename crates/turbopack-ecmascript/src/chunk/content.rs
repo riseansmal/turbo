@@ -237,7 +237,7 @@ impl EcmascriptChunkContentVc {
                 .map(|id| async move {
                     let id = id.await?;
                     let id = stringify_js(&id);
-                    Ok(format!(r#"instantiateRuntimeModule({id});"#)) as Result<_>
+                    Ok(format!(r#"    instantiateRuntimeModule({id});"#)) as Result<_>
                 })
                 .try_join()
                 .await?
@@ -270,9 +270,9 @@ impl EcmascriptChunkContentVc {
                 code,
                 r#"
                     , ({{ loadedChunks, instantiateRuntimeModule, registerChunkList }}) => {{
-                        if(!(true{condition})) return true;
+                        if (!(true{condition})) return true;
                         {chunk_list_register}
-                        {entries_instantiations}
+                    {entries_instantiations}
                     }}
                 "#
             )?;
