@@ -12,6 +12,9 @@ builds:
     tags:
       - rust
     binary: bin/go-turbo
+    hooks:
+      pre:
+        - make turborepo-ffi-install-{{ .Runtime.Goos }}-{{ .Runtime.Goarch }}
     flags:
       - -trimpath
     ldflags:
