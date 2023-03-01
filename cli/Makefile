@@ -9,6 +9,10 @@ else
 	UNAME := $(shell uname -s)
 endif
 
+# for some reason go env inserts a newline, so parse w/ jq
+GOARCH:=$(shell go env -json GOARCH | jq -r .GOARCH)
+GOOS:=$(shell go env -json GOOS | jq -r .GOOS)
+
 # Strip debug info
 GO_FLAGS += "-ldflags=-s -w"
 
@@ -30,15 +34,69 @@ turbo: go-turbo$(EXT)
 go-turbo$(EXT): $(GENERATED_FILES) $(SRC_FILES) go.mod turborepo-ffi-install
 	CGO_ENABLED=1 go build $(GO_FLAGS) -tags $(GO_TAG) -o go-turbo$(EXT) ./cmd/turbo
 
-.PHONY: turborepo-ffi-install
-turborepo-ffi-install: turborepo-ffi
-	cp -r ../crates/turborepo-ffi/bindings.h \
-	      ../crates/turborepo-ffi/target/release/libturborepo_ffi.a \
-	      ./internal/ffi
-
 .PHONY: turborepo-ffi
 turborepo-ffi:
-	cd ../crates/turborepo-ffi && CARGO_TARGET_DIR=./target cargo build --release
+	cd ../crates/turborepo-ffi && cargo build --release --target-dir ./target
+
+.PHONY: turborepo-ffi-install
+turborepo-ffi-install: turborepo-ffi turborepo-ffi-copy-bindings
+	node copy.js ../crates/turborepo-ffi/target/release/libturborepo_ffi.a ./internal/ffi/libturborepo_ffi_$(GOOS)_$(GOARCH).a
+
+.PHONY: turborepo-ffi-copy-bindings
+turborepo-ffi-copy-bindings:
+	node copy.js ../crates/turborepo-ffi/bindings.h ./internal/ffi/bindings.h
+
+#
+# ffi cross compiling
+#
+# these targets are used to build the ffi library for each platform
+# when doing a release. they _may_ work on your local machine, but
+# they're not intended to be used for development.
+#
+
+.PHONY: turborepo-ffi-install-win
+turborepo-ffi-install-win: turborepo-ffi-win turborepo-ffi-copy-bindings
+	node copy.js ../crates/turborepo-ffi/target/x86_64-pc-windows-gnu/release/libturborepo_ffi.a ./internal/ffi/libturborepo_ffi_Windows_amd64.a
+
+.PHONY: turborepo-ffi-install-darwin-arm64
+turborepo-ffi-install-darwin-arm64: turborepo-ffi-darwin-arm64 turborepo-ffi-copy-bindings
+	node copy.js ../crates/turborepo-ffi/target/aarch64-apple-darwin/release/libturborepo_ffi.a ./internal/ffi/libturborepo_ffi_Darwin_arm64.a
+
+.PHONY: turborepo-ffi-install-darwin-amd64
+turborepo-ffi-install-darwin-amd64: turborepo-ffi-darwin-amd64 turborepo-ffi-copy-bindings
+	node copy.js ../crates/turborepo-ffi/target/x86_64-apple-darwin/release/libturborepo_ffi.a ./internal/ffi/libturborepo_ffi_Darwin_amd64.a
+
+.PHONY: turborepo-ffi-install-linux-arm64
+turborepo-ffi-install-linux-arm64: turborepo-ffi-linux-arm64 turborepo-ffi-copy-bindings
+	node copy.js ../crates/turborepo-ffi/target/aarch64-unknown-linux-gnu/release/libturborepo_ffi.a ./internal/ffi/libturborepo_ffi_Linux_arm64.a
+
+.PHONY: turborepo-ffi-install-linux-amd64
+turborepo-ffi-install-linux-amd64: turborepo-ffi-linux-amd64 turborepo-ffi-copy-bindings
+	node copy.js ../crates/turborepo-ffi/target/x86_64-unknown-linux-gnu/release/libturborepo_ffi.a ./internal/ffi/libturborepo_ffi_Linux_amd64.a
+
+.PHONY: turborepo-ffi-win
+turborepo-ffi-win:
+	cd ../crates/turborepo-ffi && cross build --release --target-dir ./target --target x86_64-pc-windows-gnu
+
+.PHONY: turborepo-ffi-darwin-arm64
+turborepo-ffi-darwin-arm64:
+	cd ../crates/turborepo-ffi && cross build --release --target-dir ./target --target aarch64-apple-darwin
+
+.PHONY: turborepo-ffi-darwin-amd64
+turborepo-ffi-darwin-amd64:
+	cd ../crates/turborepo-ffi && cross build --release --target-dir ./target --target x86_64-apple-darwin
+
+.PHONY: turborepo-ffi-linux-arm64
+turborepo-ffi-linux-arm64:
+	cd ../crates/turborepo-ffi && cross build --release --target-dir ./target --target aarch64-unknown-linux-gnu
+
+.PHONY: turborepo-ffi-linux-amd64
+turborepo-ffi-linux-amd64:
+	cd ../crates/turborepo-ffi && cross build --release --target-dir ./target --target x86_64-unknown-linux-gnu
+
+#
+# end
+#
 
 .PHONY: turborepo-ffi-proto
 turborepo-ffi-proto:
