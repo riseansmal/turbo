@@ -131,7 +131,7 @@ endif
 clean-go:
 	go clean -testcache ./...
 
-test-go: $(GENERATED_FILES) $(GO_FILES) go.mod go.sum
+test-go: $(GENERATED_FILES) $(GO_FILES) go.mod go.sum turborepo-ffi-install
 	go test $(TURBO_RACE) -tags $(GO_TAG) ./...
 
 # protos need to be compiled before linting, since linting needs to pick up
